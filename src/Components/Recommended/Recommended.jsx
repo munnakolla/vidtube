@@ -1,4 +1,4 @@
-import {useState,useEffect} from 'react'
+import {useState,useEffect,useCallback} from 'react'
 import './Recommended.css'
 import { API_KEY, value_converter } from '../../Data'
 import { Link } from 'react-router-dom'
@@ -7,16 +7,16 @@ const Recommended = ({categoryId}) => {
 
     const [apiData,setApiData] = useState([]);
 
-    const fetchData = async () =>{
+    const fetchData = useCallback(async () =>{
 
     const relatedVideo_url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&chart=mostPopular&regionCode=IN&videoCategoryId=${categoryId}&maxResults=45&key=${API_KEY}`;
     await fetch(relatedVideo_url).then(res=>res.json()).then(data=>setApiData(data.items));
 
-    }
+    }, [categoryId]);
 
     useEffect(()=>{
         fetchData();
-    },[])
+    },[fetchData])
 
 
   return (

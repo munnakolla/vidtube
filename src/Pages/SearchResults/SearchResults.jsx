@@ -1,10 +1,10 @@
 // Pages/SearchResults/SearchResults.jsx
 import './SearchResults.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { API_KEY, value_converter } from '../../Data';
+import { API_KEY } from '../../Data';
 import moment from 'moment';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../hooks/useApp';
 
 const SearchResults = () => {
   const { query } = useParams();
@@ -17,7 +17,7 @@ const SearchResults = () => {
   
   const { addToSearchHistory } = useApp();
 
-  const fetchSearchResults = async (pageToken = '') => {
+  const fetchSearchResults = useCallback(async (pageToken = '') => {
     try {
       if (!pageToken) {
         setLoading(true);
@@ -61,7 +61,7 @@ const SearchResults = () => {
       setLoading(false);
       setLoadingMore(false);
     }
-  };
+  }, [query, addToSearchHistory]);
 
   const fetchChannelIcons = async (videoItems) => {
     try {
@@ -95,7 +95,7 @@ const SearchResults = () => {
       setNextPageToken('');
       fetchSearchResults();
     }
-  }, [query]);
+  }, [query, fetchSearchResults]);
 
   if (loading) {
     return (

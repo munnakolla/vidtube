@@ -1,6 +1,6 @@
 import React from 'react';
 import './History.css';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../hooks/useApp';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 

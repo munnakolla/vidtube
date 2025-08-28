@@ -1,6 +1,6 @@
 import React from 'react';
 import './Subscriptions.css';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../hooks/useApp';
 import { Link } from 'react-router-dom';
 import { value_converter } from '../../Data';
 

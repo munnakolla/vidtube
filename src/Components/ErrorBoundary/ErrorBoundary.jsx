@@ -6,14 +6,14 @@ class ErrorBoundary extends React.Component {
     this.state = { hasError: false, error: null, errorInfo: null };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(errorInfo, errorStack) {
     this.setState({
-      error: error,
-      errorInfo: errorInfo
+      error: errorInfo,
+      errorInfo: errorStack
     });
   }
 
@@ -31,7 +31,7 @@ class ErrorBoundary extends React.Component {
             >
               Reload page
             </button>
-            {process.env.NODE_ENV === 'development' && (
+            {typeof window !== 'undefined' && window.location.hostname === 'localhost' && (
               <details style={{ whiteSpace: 'pre-wrap', marginTop: '20px' }}>
                 <summary>Error details (development only)</summary>
                 {this.state.error && this.state.error.toString()}

@@ -1,4 +1,4 @@
-import {useEffect, useState } from 'react'
+import {useEffect, useState, useCallback } from 'react'
 import './PlayVideo.css'
 import like from '../../assets/like.png'
 import dislike from '../../assets/dislike.png'
@@ -7,7 +7,7 @@ import save from '../../assets/save.png'
 import { API_KEY, value_converter } from '../../Data'
 import moment from 'moment'
 import { useParams } from 'react-router-dom'
-import { useApp } from '../../context/AppContext'
+import { useApp } from '../../hooks/useApp'
 
 const PlayVideo = () => {
 
@@ -29,7 +29,7 @@ const PlayVideo = () => {
         isVideoLiked 
     } = useApp();
 
-    const fetchVideodata = async () => {
+    const fetchVideodata = useCallback(async () => {
         try {
             const videoDetails_url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id=${videoId}&key=${API_KEY}`;
             const response = await fetch(videoDetails_url);
@@ -48,12 +48,12 @@ const PlayVideo = () => {
                 };
                 addToWatchHistory(videoData);
             }
-        } catch (error) {
-            console.error('Error fetching video data:', error);
+        } catch (err) {
+            console.error('Error fetching video data:', err);
         }
-    }
+    }, [videoId, addToWatchHistory])
 
-    const fetchChannelData = async () => {
+    const fetchChannelData = useCallback(async () => {
         if (!apiData) return;
         
         try {
@@ -72,10 +72,10 @@ const PlayVideo = () => {
             if (commentData.items) {
                 setCommentData(commentData.items);
             }
-        } catch (error) {
-            console.error('Error fetching channel/comment data:', error);
+        } catch (err) {
+            console.error('Error fetching channel/comment data:', err);
         }
-    }
+    }, [apiData, videoId])
 
     const handleLike = () => {
         if (apiData) {
@@ -110,7 +110,7 @@ const PlayVideo = () => {
                     title: apiData?.snippet?.title || 'YouTube Video',
                     url: videoUrl
                 });
-            } catch (error) {
+            } catch {
                 console.log('Share cancelled');
             }
         } else {
@@ -118,7 +118,7 @@ const PlayVideo = () => {
             try {
                 await navigator.clipboard.writeText(videoUrl);
                 alert('Video URL copied to clipboard!');
-            } catch (error) {
+            } catch {
                 setShowShareMenu(true);
             }
         }
@@ -147,11 +147,11 @@ const PlayVideo = () => {
 
     useEffect(()=>{
         fetchVideodata();
-    },[videoId])
+    },[fetchVideodata])
 
     useEffect(()=>{
         fetchChannelData();
-    },[apiData])
+    },[fetchChannelData])
 
     if (!apiData) {
         return (

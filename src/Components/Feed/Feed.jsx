@@ -1,9 +1,9 @@
-import {useState,useEffect} from "react";
+import {useState,useEffect,useCallback} from "react";
 import "./Feed.css";
 import { Link } from "react-router-dom";
 import { API_KEY ,value_converter} from "../../Data";
 import moment from "moment";
-import { useApp } from "../../context/AppContext";
+import { useApp } from "../../hooks/useApp";
 
 const Feed = ({category}) => {
 
@@ -12,7 +12,7 @@ const Feed = ({category}) => {
     const [error, setError] = useState(null);
     const { setIsLoading } = useApp();
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -39,11 +39,11 @@ const Feed = ({category}) => {
             setLoading(false);
             setIsLoading(false);
         }
-    }
+    }, [category, setIsLoading]);
 
     useEffect(()=>{
         fetchData();
-    },[category])
+    },[fetchData])
 
     if (loading) {
         return (
@@ -91,7 +91,7 @@ const Feed = ({category}) => {
 
   return (
     <div className="feed">
-        {data.map((item,index)=>{
+        {data.map((item)=>{
             const thumbnail = item.snippet.thumbnails.maxres?.url ||
                             item.snippet.thumbnails.high?.url ||
                             item.snippet.thumbnails.medium.url;
